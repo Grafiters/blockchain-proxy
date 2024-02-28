@@ -1,9 +1,9 @@
 version: '3.6'
 
 services:
-  specta:
+  bnb:
     restart: always
-    image: "specta:0.1"
+    image: "bnb-proxy:0.1"
     ports:
       - "10000:3000"
     logging:
@@ -12,7 +12,7 @@ services:
         max-size: "50m"
   fantom:
     restart: always
-    image: "fantom:0.1"
+    image: "fantom-proxy:0.1"
     ports:
       - "20000:3000"
     logging:

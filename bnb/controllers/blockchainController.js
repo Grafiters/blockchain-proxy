@@ -69,10 +69,11 @@ const sendToken = async (request) => {
   const {amount,to,privKey,gasPrice,gasLimit,contractAddress} = request.body
   const wallet  = new ethers.Wallet(privKey);
   const address = wallet.address
-  var arrayIndex = (contractList.findIndex(function(item){
-    return item.indexOf(contractAddress)!==-1;
-  }));
+  var arrayIndex = 1
+  console.log(arrayIndex);
   var abi = abiList[arrayIndex]
+  console.log(abiList);
+  console.log(abi);
   var jsonABI = JSON.parse(abi)
   const contract = new web3.eth.Contract(jsonABI, contractAddress);
   const contractRawTx = await contract.methods.transfer(to, web3.utils.toHex(amount)).encodeABI();
@@ -121,9 +122,7 @@ const fetchBlock = async (request) => {
       }else{
         var isListed = contractList.includes(to)
         if(isListed){
-          var arrayIndex = (contractList.findIndex(function(item){
-            return item.indexOf(to)!==-1;
-          }));
+          var arrayIndex = 1
           var abi = abiList[arrayIndex]
           const decoder= new InputDataDecoder(abi)
           let result = decoder.decodeData(data)

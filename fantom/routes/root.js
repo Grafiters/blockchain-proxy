@@ -17,7 +17,7 @@ module.exports = async function (fastify, opts) {
   fastify.post('/get-ether-balance',{schema: balanceSchema }, Blockchain.getBalance)
   fastify.post('/get-smart-contract-balance',{schema: balanceERC20Schema }, Blockchain.getTokenBalance)
   fastify.post('/send-transaction',{schema: sendSchema }, Blockchain.sendEther)
-  fastify.post('/send-ERC20-transaction',{schema: sendTokenSchema }, Blockchain.sendToken)
+  fastify.post('/send-ERC20-transaction',Blockchain.sendToken)
   fastify.post('/fetch-block',{schema: blockSchema }, Blockchain.fetchBlock)
 
 }
