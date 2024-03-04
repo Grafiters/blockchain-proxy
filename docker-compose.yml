@@ -19,3 +19,21 @@ services:
       driver: "json-file"
       options:
         max-size: "50m"
+  tron:
+    restart: always
+    image: "tron-proxy:0.1"
+    ports:
+      - "30000:3000"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+  bnb-mainnet:
+    restart: always
+    image: "bnb-mainnet-proxy:0.1"
+    ports:
+      - "25000:3000"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
