@@ -97,7 +97,8 @@ const fetchBlock = async (request) => {
   const transactions = block ? block.transactions : []
   if(transactions.length) {
     for (const tx of transactions) {
-      let dt
+      try {
+        let dt
       const txid = tx.hash
       const from = tx.from
       const gasPrice = tx.gasPrice
@@ -144,6 +145,9 @@ const fetchBlock = async (request) => {
         }
       }
       if(dt)txs.push(dt)
+      } catch (error) {
+        console.log(tx);
+      }
     }
   }
 

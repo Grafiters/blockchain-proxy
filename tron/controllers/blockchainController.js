@@ -93,13 +93,14 @@ const fetchBlock = async (request) => {
   const { from, to } = request.body
   var result = await tronWeb.trx.getBlockRange(from, to)
   var BlockTransaction = []
+  let count = 1
   for (const block of result) {
     var txs = []
     let transactions = block.transactions
     if (transactions) {
       for (const tx of transactions) {
-        console.log(tx.ret)
-        let status = tx.ret[0].contractRet
+        try {
+          let status = tx.ret[0].contractRet
         if (status === 'SUCCESS') {
           let txID = tx.txID
           let contract = tx.raw_data.contract[0]
@@ -135,7 +136,6 @@ const fetchBlock = async (request) => {
                 if (decode && decode.length > 0) {
                   switch (method) {
                     case 'transfer':
-
                       from = tronWeb.address.fromHex(value.owner_address)
                       let to_address = decode[0]._hex.replace('0x41', '0x')
                       to_address.replace('0x', '41')
@@ -154,6 +154,10 @@ const fetchBlock = async (request) => {
                 }
               }
           }
+        }
+        } catch (error) {
+          console.log(error);
+          console.log(tx);
         }
       }
       let data = { height: block.block_header.raw_data.number, txs: txs }
