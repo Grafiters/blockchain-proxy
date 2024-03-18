@@ -97,53 +97,58 @@ const fetchBlock = async (request) => {
   const transactions = block ? block.transactions : []
   if(transactions.length) {
     for (const tx of transactions) {
-      let dt
-      const txid = tx.hash
-      const from = tx.from
-      const gasPrice = tx.gasPrice
-      const gasLimit = tx.gasLimit
-      const to = tx.to
-      const value = tx.value
-      const data = tx.data
+      try {
+        let dt
+        const txid = tx.hash
+        const from = tx.from
+        const gasPrice = tx.gasPrice
+        const gasLimit = tx.gasLimit
+        const to = tx.to
+        const value = tx.value
+        const data = tx.data
 
-      if(data === '0x' || parseInt(data, 16) === 0){
-        dt = {
-          txid: txid,
-          from: from,
-          gasPrice: gasPrice.toLocaleString('fullwide', {useGrouping:false}),
-          gasLimit: gasLimit.toLocaleString('fullwide', {useGrouping:false}),
-          to: to,
-          amount: value.toLocaleString('fullwide', {useGrouping:false}),
-          contractAddress: '',
-          type: 'Ether',
-        }
-      }else{
-        var isListed = contractList.includes(to)
-        if(isListed){
-          var arrayIndex = (contractList.findIndex(function(item){
-            return item.indexOf(to)!==-1;
-          }));
-          var abi = abiList[arrayIndex]
-          const decoder= new InputDataDecoder(abi)
-          let result = decoder.decodeData(data)
-          let toaddress = "0x"+result.inputs[0]
-          if(typeof result.inputs[1] !== 'string') {
-            if (contract.includes(result.method)){
-              dt = {
-                txid: txid,
-                from: from,
-                gasPrice: gasPrice.toLocaleString('fullwide', {useGrouping:false}),
-                gasLimit: gasLimit.toLocaleString('fullwide', {useGrouping:false}),
-                to: toaddress,
-                amount: (result.inputs[1]).toLocaleString('fullwide', {useGrouping:false}),
-                contractAddress: to,
-                type: 'Smart Contract',
+        if(data === '0x' || parseInt(data, 16) === 0){
+          dt = {
+            txid: txid,
+            from: from,
+            gasPrice: gasPrice.toLocaleString('fullwide', {useGrouping:false}),
+            gasLimit: gasLimit.toLocaleString('fullwide', {useGrouping:false}),
+            to: to,
+            amount: value.toLocaleString('fullwide', {useGrouping:false}),
+            contractAddress: '',
+            type: 'Ether',
+          }
+        }else{
+          var isListed = contractList.includes(to)
+          if(isListed){
+            var arrayIndex = (contractList.findIndex(function(item){
+              return item.indexOf(to)!==-1;
+            }));
+            var abi = abiList[arrayIndex]
+            const decoder= new InputDataDecoder(abi)
+            let result = decoder.decodeData(data)
+            let toaddress = "0x"+result.inputs[0]
+            if(typeof result.inputs[1] !== 'string') {
+              if (contract.includes(result.method)){
+                dt = {
+                  txid: txid,
+                  from: from,
+                  gasPrice: gasPrice.toLocaleString('fullwide', {useGrouping:false}),
+                  gasLimit: gasLimit.toLocaleString('fullwide', {useGrouping:false}),
+                  to: toaddress,
+                  amount: (result.inputs[1]).toLocaleString('fullwide', {useGrouping:false}),
+                  contractAddress: to,
+                  type: 'Smart Contract',
+                }
               }
             }
           }
         }
+        if(dt)txs.push(dt)
+      } catch (error) {
+        console.log(tx.hash);
+        console.log(error);
       }
-      if(dt)txs.push(dt)
     }
   }
 
