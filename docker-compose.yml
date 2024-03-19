@@ -28,6 +28,33 @@ services:
       driver: "json-file"
       options:
         max-size: "50m"
+  arbitrum:
+    restart: always
+    image: "arbitrum-proxy:0.1"
+    ports:
+      - "40000:3000"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+  avalance:
+    restart: always
+    image: "avalance-proxy:0.1"
+    ports:
+      - "50000:3000"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+  peta:
+    restart: always
+    image: "peta-proxy:0.1"
+    ports:
+      - "60000:3000"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
   bnb-mainnet:
     restart: always
     image: "bnb-mainnet-proxy:0.1"
