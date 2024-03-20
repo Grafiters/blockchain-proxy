@@ -1,3 +1,13 @@
+exports.blockHeightSchema = {
+  body: {
+    type: 'object',
+    required: ['height'],
+    properties: {
+      height: { type: 'number' }
+    },
+  },
+};
+
 exports.blockSchema = {
   body: {
     type: 'object',

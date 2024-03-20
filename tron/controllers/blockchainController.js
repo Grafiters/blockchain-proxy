@@ -93,6 +93,84 @@ const sendToken = async (request) => {
   return { hash: result.txid }
 };
 
+const fetchBlockSingle = async (request) => {
+  let { from, to } = request.body
+  to = to + 1
+  var result = await tronWeb.trx.getBlockRange(from, to)
+  var BlockTransaction = []
+  let count = 1
+  for (const block of result) {
+    var txs = []
+    let transactions = block.transactions
+    if (transactions) {
+      for (const tx of transactions) {
+        try {
+          let status = tx.ret[0].contractRet
+        if (status === 'SUCCESS') {
+          let txID = tx.txID
+          let contract = tx.raw_data.contract[0]
+          let value = contract.parameter.value
+          let type = contract.type
+          let from, to, amount, contractAddress, data, resultInput
+
+          switch (type) {
+            case 'TransferContract':
+              from = tronWeb.address.fromHex(value.owner_address)
+              to = tronWeb.address.fromHex(value.to_address)
+              amount = value.amount.toLocaleString('fullwide', { useGrouping: false })
+              txs.push({ type: 'TRX', txID: txID, from_address: from, to_address: to, amount: amount, contract: '' })
+              break
+
+            case 'TriggerSmartContract':
+              data = value.data
+              contractAddress = tronWeb.address.fromHex(value.contract_address)
+              var isListed = contractList.includes(contractAddress)
+
+              if (isListed) {
+                var arrayIndex = 0
+                resultInput = _extractInfoFromABI(data, abiList[arrayIndex]);
+                let method = resultInput ? resultInput.method : null
+                let typesInput = resultInput ? resultInput.typesInput : null
+                let types = typesInput.map(function (x) { return x.replace('address', 'uint256') });
+                let decode
+                try {
+                  decode = await decodeParams(types, data, true)
+                } catch (e) { }
+                if (decode && decode.length > 0) {
+                  switch (method) {
+                    case 'transfer':
+                      from = tronWeb.address.fromHex(value.owner_address)
+                      let to_address = decode[0]._hex.replace('0x41', '0x')
+                      to_address.replace('0x', '41')
+                      to = tronWeb.address.fromHex(to_address.replace('0x', '41'))
+                      amount = parseInt(decode[1]._hex).toLocaleString('fullwide', { useGrouping: false })
+                      txs.push({ type: 'TRC20', txID: txID, from_address: from, to_address: to, amount: amount, contract: contractAddress })
+                      break;
+
+                    case 'transferFrom':
+                      from = tronWeb.address.fromHex(decode[0]._hex)
+                      to = tronWeb.address.fromHex(decode[1]._hex)
+                      amount = parseInt(decode[2]._hex).toLocaleString('fullwide', { useGrouping: false })
+                      txs.push({ type: 'TRC20', txID: txID, from_address: from, to_address: to, amount: amount, contract: contractAddress })
+                      break;
+                  }
+                }
+              }
+          }
+        }
+        } catch (error) {
+          console.log(error);
+          console.log(tx);
+        }
+      }
+      let data = { height: block.block_header.raw_data.number, txs: txs }
+      if (txs.length > 0) { BlockTransaction.push(data) }
+    }
+  }
+  return BlockTransaction
+};
+
+
 const fetchBlock = async (request) => {
   const { from, to } = request.body
   var result = await tronWeb.trx.getBlockRange(from, to)
@@ -272,6 +350,7 @@ function _handleInputs(input) {
 module.exports = {
   createAccount,
   getHeight,
+  fetchBlockSingle,
   getBalance,
   getTokenBalance,
   sendEther,
