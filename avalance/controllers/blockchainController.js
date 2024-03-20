@@ -76,8 +76,7 @@ const sendToken = async (request) => {
   const address = wallet.address
   var arrayIndex = 0
   var abi = abiList
-  var jsonABI = JSON.parse(abi)
-  const contract = new web3.eth.Contract(jsonABI, contractAddress);
+  const contract = new web3.eth.Contract(abi, contractAddress);
   const contractRawTx = await contract.methods.transfer(to, web3.utils.toHex(amount)).encodeABI();
   const rawTx = {
     from: address.toLowerCase(),

@@ -71,12 +71,9 @@ const sendToken = async (request) => {
   const {amount,to,privKey,gasPrice,gasLimit,contractAddress} = request.body
   const wallet  = new ethers.Wallet(privKey);
   const address = wallet.address
-  var arrayIndex = (contractList.findIndex(function(item){
-    return item.indexOf(contractAddress)!==-1;
-  }));
+  var arrayIndex = 0
   var abi = abiList
-  var jsonABI = JSON.parse(abi)
-  const contract = new web3.eth.Contract(jsonABI, contractAddress);
+  const contract = new web3.eth.Contract(abi, contractAddress);
   const contractRawTx = await contract.methods.transfer(to, web3.utils.toHex(amount)).encodeABI();
   const rawTx = {
     from: address.toLowerCase(),
