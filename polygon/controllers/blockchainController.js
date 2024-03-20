@@ -71,7 +71,7 @@ const sendToken = async (request) => {
   var arrayIndex = (contractList.findIndex(function(item){
     return item.indexOf(contractAddress)!==-1;
   }));
-  var abi = abiList[arrayIndex]
+  var abi = abiList[0]
   var jsonABI = JSON.parse(abi)
   const contract = new web3.eth.Contract(jsonABI, contractAddress);
   const contractRawTx = await contract.methods.transfer(to, web3.utils.toHex(amount)).encodeABI();
@@ -121,9 +121,7 @@ const fetchBlock = async (request) => {
         }else{
           var isListed = contractList.includes(to)
           if(isListed){
-            var arrayIndex = (contractList.findIndex(function(item){
-              return item.indexOf(to)!==-1;
-            }));
+            var arrayIndex = 0
             var abi = abiList[arrayIndex]
             const decoder= new InputDataDecoder(abi)
             let result = decoder.decodeData(data)
