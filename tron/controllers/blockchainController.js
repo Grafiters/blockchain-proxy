@@ -122,9 +122,7 @@ const fetchBlock = async (request) => {
               var isListed = contractList.includes(contractAddress)
 
               if (isListed) {
-                var arrayIndex = (contractList.findIndex(function (item) {
-                  return item.indexOf(contractAddress) !== -1;
-                }));
+                var arrayIndex = 0
                 resultInput = _extractInfoFromABI(data, abiList[arrayIndex]);
                 let method = resultInput ? resultInput.method : null
                 let typesInput = resultInput ? resultInput.typesInput : null

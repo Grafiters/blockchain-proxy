@@ -10,10 +10,10 @@ exports.initTokenABI = async () => {
         console.error('Error reading file:', err);
         return;
     }
-
     try {
-        const contractList = JSON.parse(data);
-        process.env.abi = JSON.stringify(contractList)
+        var contractList = []
+        const contract = JSON.parse(data);
+        process.env.abi = contractList.push(contract)
     } catch (err) {
         console.error('Error parsing JSON data:', err);
     }

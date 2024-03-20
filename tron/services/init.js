@@ -18,7 +18,9 @@ exports.initTokenABI = async () => {
 
     try {
         const contractList = JSON.parse(data);
-        process.env.abi = JSON.stringify(contractList)
+        const contract = JSON.stringify(contractList)
+
+        process.env.abi = contract
     } catch (err) {
         console.error('Error parsing JSON data:', err);
     }

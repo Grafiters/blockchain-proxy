@@ -103,7 +103,7 @@ const fetchBlock = async (request) => {
         const from = tx.from
         const gasPrice = tx.gasPrice
         const gasLimit = tx.gasLimit
-        const to = tx.to
+        const to = tx.to.toLocaleLowerCase()
         const value = tx.value
         const data = tx.data
 
@@ -123,7 +123,8 @@ const fetchBlock = async (request) => {
           if(isListed){
             var arrayIndex = 0
             var abi = abiList[arrayIndex]
-            const decoder= new InputDataDecoder(abi)
+            const decoder = new InputDataDecoder(abi)
+            console.log(decoder);
             let result = decoder.decodeData(data)
             let toaddress = "0x"+result.inputs[0]
             if(typeof result.inputs[1] !== 'string') {
