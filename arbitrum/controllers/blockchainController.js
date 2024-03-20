@@ -1,5 +1,5 @@
 const RPC_URL           = process.env.RPC_URL
-const contractList      = process.env.token.split(',')
+const contractRaw       = process.env.token.split(',')
 const abiList           = JSON.parse(process.env.abi)
 
 const { ethers }        = require("ethers")
@@ -10,6 +10,13 @@ const ethereum          = new ethers.providers.JsonRpcProvider(RPC_URL)
 const Web3              = require("web3");
 const web3              = new Web3(new Web3.providers.HttpProvider(RPC_URL))
 const InputDataDecoder  = require('ethereum-input-data-decoder')
+
+let contractList = []
+if (contractRaw.length >= 1){
+  contractList = contractRaw.map(function(element) {
+    return element.toLowerCase();
+  });
+}
 
 const createAccount = async () => {
   const wallet = await ethers.Wallet.createRandom()
@@ -69,7 +76,7 @@ const sendToken = async (request) => {
   const wallet  = new ethers.Wallet(privKey);
   const address = wallet.address
   var arrayIndex = 0
-  var abi = abiList[arrayIndex]
+  var abi = abiList
   var jsonABI = JSON.parse(abi)
   const contract = new web3.eth.Contract(jsonABI, contractAddress);
   const contractRawTx = await contract.methods.transfer(to, web3.utils.toHex(amount)).encodeABI();
@@ -97,52 +104,55 @@ const fetchBlock = async (request) => {
     for (const tx of transactions) {
       try {
         let dt
-      const txid = tx.hash
-      const from = tx.from
-      const gasPrice = tx.gasPrice
-      const gasLimit = tx.gasLimit
-      const to = tx.to
-      const value = tx.value
-      const data = tx.data
+        const txid = tx.hash
+        const from = tx.from
+        const gasPrice = tx.gasPrice
+        const gasLimit = tx.gasLimit
+        const to = tx.to.toLowerCase()
+        const value = tx.value
+        const data = tx.data
 
-      if(data === '0x' || parseInt(data, 16) === 0){
-        dt = {
-          txid: txid,
-          from: from,
-          gasPrice: gasPrice.toLocaleString('fullwide', {useGrouping:false}),
-          gasLimit: gasLimit.toLocaleString('fullwide', {useGrouping:false}),
-          to: to,
-          amount: value.toLocaleString('fullwide', {useGrouping:false}),
-          contractAddress: '',
-          type: 'Ether',
-        }
-      }else{
-        var isListed = contractList.includes(to)
-        if(isListed){
-          var arrayIndex = 0
-          var abi = abiList[arrayIndex]
-          const decoder= new InputDataDecoder(abi)
-          let result = decoder.decodeData(data)
-          let toaddress = "0x"+result.inputs[0]
-          if(typeof result.inputs[1] !== 'string') {
-            if (contract.includes(result.method)){
-              dt = {
-                txid: txid,
-                from: from,
-                gasPrice: gasPrice.toLocaleString('fullwide', {useGrouping:false}),
-                gasLimit: gasLimit.toLocaleString('fullwide', {useGrouping:false}),
-                to: toaddress,
-                amount: (result.inputs[1]).toLocaleString('fullwide', {useGrouping:false}),
-                contractAddress: to,
-                type: 'Smart Contract',
+        console.log(parseInt(data, 16));
+        if(data === '0x' || parseInt(data, 16) === 0){
+          console.log('Masuk');
+          dt = {
+            txid: txid,
+            from: from,
+            gasPrice: gasPrice.toLocaleString('fullwide', {useGrouping:false}),
+            gasLimit: gasLimit.toLocaleString('fullwide', {useGrouping:false}),
+            to: to,
+            amount: value.toLocaleString('fullwide', {useGrouping:false}),
+            contractAddress: '',
+            type: 'Ether',
+          }
+        }else{
+          var isListed = contractList.includes(to)
+          if(isListed){
+            var arrayIndex = 0
+            var abi = abiList
+            const decoder= new InputDataDecoder(abi)
+            let result = decoder.decodeData(data)
+            console.log(result);
+            let toaddress = "0x"+result.inputs[0]
+            if(typeof result.inputs[1] !== 'string') {
+              if (contract.includes(result.method)){
+                dt = {
+                  txid: txid,
+                  from: from,
+                  gasPrice: gasPrice.toLocaleString('fullwide', {useGrouping:false}),
+                  gasLimit: gasLimit.toLocaleString('fullwide', {useGrouping:false}),
+                  to: toaddress,
+                  amount: (result.inputs[1]).toLocaleString('fullwide', {useGrouping:false}),
+                  contractAddress: to,
+                  type: 'Smart Contract',
+                }
               }
             }
           }
         }
-      }
-      if(dt)txs.push(dt)
+        if(dt)txs.push(dt)
       } catch (error) {
-        console.log(tx);
+        console.log(error);
       }
     }
   }
