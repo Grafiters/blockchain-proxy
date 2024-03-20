@@ -105,7 +105,7 @@ const fetchBlock = async (request) => {
         const from = tx.from
         const gasPrice = tx.gasPrice
         const gasLimit = tx.gasLimit
-        const to = tx.to.toLocaleLowerCase()
+        const to = tx.to !== null ? tx.to.toLocaleLowerCase() : tx.to
         const value = tx.value
         const data = tx.data
 
