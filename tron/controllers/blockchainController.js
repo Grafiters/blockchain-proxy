@@ -1,7 +1,11 @@
 const RPC_URL = process.env.RPC_URL
-const contractList = process.env.token.split(',')
+const contractRaw       = process.env.token.split(',')
 const abiList = JSON.parse(process.env.abi)
 
+
+const contractList = contractRaw.map(function(element) {
+  return element.toLowerCase();
+});
 
 const TronWeb = require('tronweb')
 const HttpProvider = TronWeb.providers.HttpProvider;

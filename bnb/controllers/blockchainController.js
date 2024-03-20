@@ -1,5 +1,5 @@
 const RPC_URL           = process.env.RPC_URL
-const contractList      = process.env.token.split(',')
+const contractRaw       = process.env.token.split(',')
 const abiList           = JSON.parse(process.env.abi)
 
 const { ethers }        = require("ethers")
@@ -10,6 +10,10 @@ const ethereum          = new ethers.providers.JsonRpcProvider(RPC_URL)
 const Web3              = require("web3");
 const web3              = new Web3(new Web3.providers.HttpProvider(RPC_URL))
 const InputDataDecoder  = require('ethereum-input-data-decoder')
+
+const contractList = contractRaw.map(function(element) {
+  return element.toLowerCase();
+});
 
 const createAccount = async () => {
   const wallet = await ethers.Wallet.createRandom()
@@ -70,7 +74,7 @@ const sendToken = async (request) => {
   const wallet  = new ethers.Wallet(privKey);
   const address = wallet.address
   var arrayIndex = 0
-  var abi = abiList[arrayIndex]
+  var abi = abiList
   var jsonABI = JSON.parse(abi)
   const contract = new web3.eth.Contract(jsonABI, contractAddress);
   const contractRawTx = await contract.methods.transfer(to, web3.utils.toHex(amount)).encodeABI();
@@ -102,7 +106,7 @@ const fetchBlock = async (request) => {
         const from = tx.from
         const gasPrice = tx.gasPrice
         const gasLimit = tx.gasLimit
-        const to = tx.to
+        const to = tx.to.toLocaleLowerCase()
         const value = tx.value
         const data = tx.data
 
@@ -121,8 +125,11 @@ const fetchBlock = async (request) => {
           var isListed = contractList.includes(to)
           if(isListed){
             var arrayIndex = 0
-            var abi = abiList[arrayIndex]
-            const decoder= new InputDataDecoder(abi)
+            var abi = abiList
+            const decoder = new InputDataDecoder(abi)
+            if (tx.hash == '0x0ec89a9edd8f04ab70c5027baff309db573b81458182ef3a01b75ba354281abd'){
+              console.log(decoder);
+            }
             let result = decoder.decodeData(data)
             let toaddress = "0x"+result.inputs[0]
             if(typeof result.inputs[1] !== 'string') {
@@ -144,6 +151,7 @@ const fetchBlock = async (request) => {
         if(dt)txs.push(dt)
       } catch (error) {
         console.log(tx.hash);
+        console.log(error);
       }
     }
   }

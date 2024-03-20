@@ -1,5 +1,5 @@
 const RPC_URL           = process.env.RPC_URL
-const contractList      = process.env.token.split(',')
+const contractRaw       = process.env.token.split(',')
 const abiList           = JSON.parse(process.env.abi)
 
 const { ethers }        = require("ethers")
@@ -11,6 +11,9 @@ const Web3              = require("web3");
 const web3              = new Web3(new Web3.providers.HttpProvider(RPC_URL))
 const InputDataDecoder  = require('ethereum-input-data-decoder')
 
+const contractList = contractRaw.map(function(element) {
+  return element.toLowerCase();
+});
 const createAccount = async () => {
   const wallet = await ethers.Wallet.createRandom()
   return {
@@ -71,7 +74,7 @@ const sendToken = async (request) => {
   var arrayIndex = (contractList.findIndex(function(item){
     return item.indexOf(contractAddress)!==-1;
   }));
-  var abi = abiList[0]
+  var abi = abiList
   var jsonABI = JSON.parse(abi)
   const contract = new web3.eth.Contract(jsonABI, contractAddress);
   const contractRawTx = await contract.methods.transfer(to, web3.utils.toHex(amount)).encodeABI();
@@ -122,9 +125,8 @@ const fetchBlock = async (request) => {
           var isListed = contractList.includes(to)
           if(isListed){
             var arrayIndex = 0
-            var abi = abiList[arrayIndex]
+            var abi = abiList
             const decoder = new InputDataDecoder(abi)
-            console.log(decoder);
             let result = decoder.decodeData(data)
             let toaddress = "0x"+result.inputs[0]
             if(typeof result.inputs[1] !== 'string') {
