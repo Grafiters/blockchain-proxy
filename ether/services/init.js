@@ -5,11 +5,11 @@ const rp = require("request-promise");
 
 exports.initTokenABI = async () => {
   var contractList = []
-  for (const c of contract) {
-    let sUrl = etherurl + '/api?module=contract&action=getabi&address='+c+'&apikey=' + key
-    var abi = await rp({url: sUrl,method: 'get'})
-    var res = JSON.parse(abi).result
-    contractList.push(res)
-  }
+  let sUrl = etherurl + '/api?module=contract&action=getabi&address='+contract[0]+'&apikey=' + key
+  var abi = await rp({url: sUrl,method: 'get'})
+  var res = JSON.parse(abi).result
+  console.log(res);
+  contractList.push(res)
+
   process.env.abi = JSON.stringify(contractList)
 }

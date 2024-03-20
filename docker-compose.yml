@@ -55,6 +55,15 @@ services:
       driver: "json-file"
       options:
         max-size: "50m"
+  ether:
+    restart: always
+    image: "ether-proxy:0.1"
+    ports:
+      - "55000:3000"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
   bnb-mainnet:
     restart: always
     image: "bnb-mainnet-proxy:0.1"
