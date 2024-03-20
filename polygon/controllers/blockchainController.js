@@ -43,7 +43,7 @@ const getTokenBalance = async (request) => {
   const {address,contractAddress} = request.body
   var sha3 = web3.utils.sha3("balanceOf(address)")
   const data =sha3.substr(0,10)+ web3.utils.padLeft(address.substr(2), 64)
-  var balance = await eth.eth_call({
+  var balance = await web3.eth.call({
     to: contractAddress,
     data: data
   },'latest')

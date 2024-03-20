@@ -45,7 +45,7 @@ const getTokenBalance = async (request) => {
   const {address,contractAddress} = request.body
   var sha3 = web3.utils.sha3("balanceOf(address)")
   const data =sha3.substr(0,10)+ web3.utils.padLeft(address.substr(2), 64)
-  var balance = await eth.eth_call({
+  var balance = await web3.eth.call({
     to: contractAddress,
     data: data
   },'latest')
@@ -127,9 +127,6 @@ const fetchBlock = async (request) => {
             var arrayIndex = 0
             var abi = abiList
             const decoder = new InputDataDecoder(abi)
-            if (tx.hash == '0x0ec89a9edd8f04ab70c5027baff309db573b81458182ef3a01b75ba354281abd'){
-              console.log(decoder);
-            }
             let result = decoder.decodeData(data)
             let toaddress = "0x"+result.inputs[0]
             if(typeof result.inputs[1] !== 'string') {
