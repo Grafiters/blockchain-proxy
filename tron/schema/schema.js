@@ -56,8 +56,6 @@ exports.sendSchema = {
     properties: {
       to: { type: 'string' },
       privKey: { type: 'string' },
-      gasPrice: { type: 'string' },
-      gasLimit: { type: 'string' },
       amount: { type: 'number' },
     },
   },
@@ -70,8 +68,6 @@ exports.sendTokenSchema = {
     properties: {
       to: { type: 'string' },
       privKey: { type: 'string' },
-      gasPrice: { type: 'string' },
-      gasLimit: { type: 'string' },
       amount: { type: 'number' },
       contractAddress: { type: 'string' },
     },
