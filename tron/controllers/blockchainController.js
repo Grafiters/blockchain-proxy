@@ -172,7 +172,11 @@ const fetchBlockSingle = async (request) => {
 
 
 const fetchBlock = async (request) => {
-  const { from, to } = request.body
+  let { from, to } = request.body
+  if (to == from){
+    to = to + 1
+  }
+  
   var result = await tronWeb.trx.getBlockRange(from, to)
   var BlockTransaction = []
   let count = 1

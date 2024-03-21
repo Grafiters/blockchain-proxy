@@ -33,7 +33,7 @@ const getGasPrice = async () => {
 
 const getBalance = async (request) => {
   const {address } = request.body
-  const balance = await eth.eth_getBalance(address,'latest')
+  const balance = await web3.eth.getBalance(address)
   return { balance: web3.utils.fromWei(balance, 'wei').toLocaleString('fullwide', {useGrouping:false})}
 };
 
