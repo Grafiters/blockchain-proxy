@@ -201,7 +201,7 @@ const fetchBlock = async (request) => {
               data = value.data
               contractAddress = tronWeb.address.fromHex(value.contract_address)
               var isListed = contractList.includes(contractAddress)
-              console.log(contractAddress);
+
               if (isListed) {
                 var arrayIndex = 0
                 resultInput = _extractInfoFromABI(data, abiList);
