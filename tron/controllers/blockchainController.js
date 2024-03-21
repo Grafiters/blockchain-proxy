@@ -1,11 +1,7 @@
 const RPC_URL = process.env.RPC_URL
-const contractRaw       = process.env.token.split(',')
+const contractList       = process.env.token.split(',')
 const abiList = JSON.parse(process.env.abi)
 
-
-const contractList = contractRaw.map(function(element) {
-  return element.toLowerCase();
-});
 
 const TronWeb = require('tronweb')
 const HttpProvider = TronWeb.providers.HttpProvider;
@@ -193,7 +189,6 @@ const fetchBlock = async (request) => {
           let value = contract.parameter.value
           let type = contract.type
           let from, to, amount, contractAddress, data, resultInput
-
           switch (type) {
             case 'TransferContract':
               from = tronWeb.address.fromHex(value.owner_address)
@@ -206,10 +201,10 @@ const fetchBlock = async (request) => {
               data = value.data
               contractAddress = tronWeb.address.fromHex(value.contract_address)
               var isListed = contractList.includes(contractAddress)
-
+              console.log(contractAddress);
               if (isListed) {
                 var arrayIndex = 0
-                resultInput = _extractInfoFromABI(data, abiList[arrayIndex]);
+                resultInput = _extractInfoFromABI(data, abiList);
                 let method = resultInput ? resultInput.method : null
                 let typesInput = resultInput ? resultInput.typesInput : null
                 let types = typesInput.map(function (x) { return x.replace('address', 'uint256') });
