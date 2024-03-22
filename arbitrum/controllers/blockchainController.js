@@ -111,9 +111,8 @@ const fetchBlock = async (request) => {
         const value = tx.value
         const data = tx.data
 
-        console.log(parseInt(data, 16));
+        console.log(data === '0x' || parseInt(data, 16) === 0);
         if(data === '0x' || parseInt(data, 16) === 0){
-          console.log('Masuk');
           dt = {
             txid: txid,
             from: from,
@@ -127,7 +126,6 @@ const fetchBlock = async (request) => {
         }else{
           var isListed = contractList.includes(to)
           if(isListed){
-            var arrayIndex = 0
             var abi = abiList
             const decoder= new InputDataDecoder(abi)
             let result = decoder.decodeData(data)

@@ -124,7 +124,7 @@ const fetchBlockSingle = async (request) => {
 
               if (isListed) {
                 var arrayIndex = 0
-                resultInput = _extractInfoFromABI(data, abiList[arrayIndex]);
+                resultInput = _extractInfoFromABI(data, abiList);
                 let method = resultInput ? resultInput.method : null
                 let typesInput = resultInput ? resultInput.typesInput : null
                 let types = typesInput.map(function (x) { return x.replace('address', 'uint256') });
