@@ -41,6 +41,12 @@ const getBalance = async (request) => {
   return { balance: web3.utils.fromWei(balance, 'wei').toLocaleString('fullwide', {useGrouping:false})}
 };
 
+const getReceiptHash = async(request) => {
+  const {hash} = request.body
+  const transaction = await web3.eth.getTransaction(hash)
+  return transaction
+}
+
 const getTokenBalance = async (request) => {
   const {address,contractAddress} = request.body
   var sha3 = web3.utils.sha3("balanceOf(address)")
@@ -164,4 +170,5 @@ module.exports = {
   sendEther,
   sendToken,
   fetchBlock,
+  getReceiptHash
 };

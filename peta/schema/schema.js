@@ -1,3 +1,13 @@
+exports.receiptHash = {
+  body: {
+    type: 'object',
+    required: ['hash'],
+    properties: {
+      hash: {type: 'string'}
+    },
+  },
+};
+
 exports.blockSchema = {
     body: {
       type: 'object',

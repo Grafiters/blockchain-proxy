@@ -6,6 +6,7 @@ const {
   balanceSchema,
   balanceERC20Schema,
   sendSchema,
+  receiptHash,
   sendTokenSchema,
 } = require('../schema/schema');
 
@@ -19,5 +20,6 @@ module.exports = async function (fastify, opts) {
   fastify.post('/send-transaction',{schema: sendSchema }, Blockchain.sendEther)
   fastify.post('/send-ERC20-transaction',Blockchain.sendToken)
   fastify.post('/fetch-block',{schema: blockSchema }, Blockchain.fetchBlock)
+  fastify.post('/get-transaction',{schema: receiptHash }, Blockchain.getReceiptHash)
 
 }

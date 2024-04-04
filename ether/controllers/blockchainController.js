@@ -33,6 +33,13 @@ const getGasPrice = async () => {
   return parseInt(gas)
 };
 
+const getReceiptHash = async(request) => {
+  const {hash} = request.body
+  const transaction = await web3.eth.getTransaction(hash)
+  return transaction
+}
+
+
 const getBalance = async (request) => {
   const {address } = request.body
   const balance = await eth.eth_getBalance(address,'latest')
@@ -161,4 +168,5 @@ module.exports = {
   sendEther,
   sendToken,
   fetchBlock,
+  getReceiptHash
 };
