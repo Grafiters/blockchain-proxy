@@ -35,7 +35,7 @@ const getGasPrice = async () => {
 
 const getReceiptHash = async(request) => {
   const {hash} = request.body
-  const transaction = await web3.eth.getTransaction(hash)
+  const transaction = await web3.eth.getTransactionReceipt(hash)
   return transaction
 }
 
@@ -126,25 +126,21 @@ const fetchBlock = async (request) => {
           type: 'Ether',
         }
       }else{
-        var isListed = contractList.includes(to)
-        if(isListed){
-          var arrayIndex = 0
-          var abi = abiList
-          const decoder= new InputDataDecoder(abi)
-          let result = decoder.decodeData(data)
-          let toaddress = "0x"+result.inputs[0]
-          if(typeof result.inputs[1] !== 'string') {
-            if (contract.includes(result.method)){
-              dt = {
-                txid: txid,
-                from: from,
-                gasPrice: gasPrice.toLocaleString('fullwide', {useGrouping:false}),
-                gasLimit: gasLimit.toLocaleString('fullwide', {useGrouping:false}),
-                to: toaddress,
-                amount: (result.inputs[1]).toLocaleString('fullwide', {useGrouping:false}),
-                contractAddress: to,
-                type: 'Smart Contract',
-              }
+        var abi = abiList
+        const decoder= new InputDataDecoder(abi)
+        let result = decoder.decodeData(data)
+        let toaddress = "0x"+result.inputs[0]
+        if(typeof result.inputs[1] !== 'string') {
+          if (contract.includes(result.method)){
+            dt = {
+              txid: txid,
+              from: from,
+              gasPrice: gasPrice.toLocaleString('fullwide', {useGrouping:false}),
+              gasLimit: gasLimit.toLocaleString('fullwide', {useGrouping:false}),
+              to: toaddress,
+              amount: (result.inputs[1]).toLocaleString('fullwide', {useGrouping:false}),
+              contractAddress: to,
+              type: 'Smart Contract',
             }
           }
         }

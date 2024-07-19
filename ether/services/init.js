@@ -5,30 +5,27 @@ const rp = require("request-promise");
 const fs = require('fs');
 
 exports.initTokenABI = async () => {
-  // fs.readFile('./abi.json', 'utf8', (err, data) => {
-  //   if (err) {
-  //       console.error('Error reading file:', err);
-  //       return;
-  //   }
+  fs.readFile('./abi.json', 'utf8', (err, data) => {
+    if (err) {
+        console.error('Error reading file:', err);
+        return;
+    }
 
-  //   try {
-  //     var contractList = []
+    try {
+      const contractList = JSON.parse(data);
+      const contract = JSON.stringify(contractList)
 
-  //     const contract = JSON.parse(data);
+      process.env.abi = contract
+    } catch (err) {
+        console.error('Error parsing JSON data:', err);
+    }
+  });
+  // var contractList = []
+  // let sUrl = etherurl + '/api?module=contract&action=getabi&address='+contract[0]+'&apikey=' + key
+  // var abi = await rp({url: sUrl,method: 'get'})
+  // var res = JSON.parse(abi).result
+  // console.log(res);
+  // contractList.push(res)
 
-  //     const contractParse = JSON.stringify(contract)
-  //     contractList.push(contractParse)
-  //     process.env.abi = contractList
-  //   } catch (err) {
-  //       console.error('Error parsing JSON data:', err);
-  //   }
-  // });
-  var contractList = []
-  let sUrl = etherurl + '/api?module=contract&action=getabi&address='+contract[0]+'&apikey=' + key
-  var abi = await rp({url: sUrl,method: 'get'})
-  var res = JSON.parse(abi).result
-  console.log(res);
-  contractList.push(res)
-
-  process.env.abi = JSON.stringify(contractList)
+  // process.env.abi = JSON.stringify(contractList)
 }

@@ -5,7 +5,7 @@ const rp = require("request-promise");
 const fs = require('fs');
 
 exports.initTokenABI = async () => {
-  fs.readFile('./abi.json', 'utf8', (err, data) => {
+  fs.readFile('../abi.json', 'utf8', (err, data) => {
     if (err) {
         console.error('Error reading file:', err);
         return;

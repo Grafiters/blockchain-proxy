@@ -2,7 +2,7 @@ const RPC_URL           = process.env.RPC_URL
 const contractList      = process.env.token.split(',')
 const abiList           = JSON.parse(process.env.abi)
 
-const { ethers }        = require("ethers")
+const { ethers, logger }        = require("ethers")
 const EthereumRpc       = require('ethereum-rpc-promise');
 let eth                 = new EthereumRpc(RPC_URL)
 const ethereum          = new ethers.providers.JsonRpcProvider(RPC_URL)
@@ -31,7 +31,7 @@ const getGasPrice = async () => {
   return parseInt(gas)
 };
 
-const getReceiptHas = async(request) => {
+const getReceiptHash = async(request) => {
   const {hash} = request.body
   const transaction = await web3.eth.getTransaction(hash)
   return transaction
@@ -75,8 +75,8 @@ const sendToken = async (request) => {
   const {amount,to,privKey,gasPrice,gasLimit,contractAddress} = request.body
   const wallet  = new ethers.Wallet(privKey);
   const address = wallet.address
-  var arrayIndex = 0
-  var abi = abiList[arrayIndex]
+  var arrayIndex = 1
+  var abi = abiList
   var jsonABI = JSON.parse(abi)
   const contract = new web3.eth.Contract(jsonABI, contractAddress);
   const contractRawTx = await contract.methods.transfer(to, web3.utils.toHex(amount)).encodeABI();
@@ -96,13 +96,14 @@ const sendToken = async (request) => {
 
 const fetchBlock = async (request) => {
   const { height } = request.body
+  console.log(abiList);
   var txs = []
   const contract = ['transfer','transferFrom','mint','sendMultiSig']
   const block = await ethereum.getBlockWithTransactions(height)
   const transactions = block ? block.transactions : []
   if(transactions.length) {
     for (const tx of transactions) {
-      let dt
+      var dt
       const txid = tx.hash
       const from = tx.from
       const gasPrice = tx.gasPrice
@@ -122,11 +123,15 @@ const fetchBlock = async (request) => {
           contractAddress: '',
           type: 'Ether',
         }
+
+        console.log(dt);
       }else{
         var isListed = contractList.includes(to)
+        console.log(isListed);
         if(isListed){
-          var arrayIndex = 0
-          var abi = abiList[arrayIndex]
+          var arrayIndex = 1
+          var abi = abiList
+          console.log(abi);
           const decoder= new InputDataDecoder(abi)
           let result = decoder.decodeData(data)
           let toaddress = "0x"+result.inputs[0]
@@ -146,6 +151,8 @@ const fetchBlock = async (request) => {
           }
         }
       }
+
+      console.log(dt);
       if(dt)txs.push(dt)
     }
   }
@@ -162,5 +169,5 @@ module.exports = {
   sendEther,
   sendToken,
   fetchBlock,
-  getReceiptHas
+  getReceiptHash
 };

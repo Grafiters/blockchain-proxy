@@ -43,7 +43,8 @@ const getBalance = async (request) => {
 
 const getReceiptHash = async(request) => {
   const {hash} = request.body
-  const transaction = await web3.eth.getTransaction(hash)
+  const transaction = await web3.eth.getTransactionReceipt(hash)
+
   return transaction
 }
 
